@@ -1,0 +1,29 @@
+{
+	"name": "pi-superagent",
+	"version": "0.3.0",
+	"private": true,
+	"type": "module",
+	"description": "Auditable multi-model orchestration for Pi: dispatch to other model CLIs, keep a ledger, gate irreversible actions behind human approval",
+	"keywords": [
+		"pi-package",
+		"pi",
+		"pi-extension",
+		"orchestration",
+		"multi-agent",
+		"ledger",
+		"approval-gate"
+	],
+	"pi": {
+		"extensions": [
+			"./extensions/fleet.ts",
+			"./extensions/superagent.ts"
+		]
+	},
+	"scripts": {
+		"check:paths": "node tools/check-portable.mjs",
+		"serve": "node tools/serve-static.mjs",
+		"watchdog": "node tools/watchdog.mjs",
+		"report": "node tools/report-12h.mjs",
+		"visitors": "node tools/visitors.mjs"
+	}
+}

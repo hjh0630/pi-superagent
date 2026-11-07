@@ -1,0 +1,21 @@
+{
+	// Type-check config for the extensions.
+	//
+	// The `paths` block used to point at one machine's global npm directory.
+	// It is now resolved the ordinary way: install the SDK next to this package
+	// and let node resolution find it.
+	//
+	//   npm i -D @earendil-works/pi-coding-agent
+	//   npx tsc --noEmit
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"types": ["node"]
+	},
+	"include": ["extensions/**/*.ts", "store/**/*.ts", "providers/**/*.ts", "runtime.ts"]
+}

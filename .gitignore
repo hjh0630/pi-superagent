@@ -1,0 +1,36 @@
+# runtime data — never belongs in the repo
+*.db
+*.db-shm
+*.db-wal
+analytics/
+fleet/
+jobs/
+progress/
+*.jsonl
+live-url.txt
+indexnow-key.txt
+outbox/
+
+# node
+node_modules/
+npm-debug.log*
+.pnpm-store/
+
+# build output
+dist/
+out/
+*.tsbuildinfo
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# secrets — the ledger and any credentials stay local
+*.key
+*.pem
+secret*.json
+.env
+.env.*

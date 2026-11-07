@@ -1,0 +1,276 @@
+{
+  "version": 2,
+  "defaults": {
+    "maxCallsPerDay": 40,
+    "maxMinutesPerDay": 120
+  },
+  "levels": {
+    "L0": {
+      "label": "观察",
+      "desc": "只读、不留外部痕迹"
+    },
+    "L1": {
+      "label": "起草",
+      "desc": "生成产物供人取用"
+    },
+    "L2": {
+      "label": "可逆",
+      "desc": "能撤销的写操作（本地文件、分支、依赖）"
+    },
+    "L3": {
+      "label": "不可逆",
+      "desc": "发布、合并主干、花钱、对外、删数据 —— 必须人点头"
+    }
+  },
+  "approval": {
+    "defaultLevel": "L1",
+    "expiresMinutes": 30,
+    "channels": [
+      "session",
+      "dingtalk"
+    ],
+    "rules": [
+      {
+        "tool": "bash",
+        "commandMatches": [
+          "\\bgit\\s+push\\b",
+          "\\bnpm\\s+publish\\b",
+          "\\bpnpm\\s+publish\\b",
+          "\\brm\\s+-[a-z]*r",
+          "\\bdel\\s+/",
+          "\\bRemove-Item\\b",
+          "\\bgit\\s+reset\\s+--hard\\b",
+          "\\bgit\\s+clean\\s+-",
+          "\\bshutdown\\b",
+          "\\bformat\\s+[a-z]:"
+        ],
+        "level": "L3",
+        "desc": "推送/发布/删除/重置/关机"
+      },
+      {
+        "tool": "powershell",
+        "commandMatches": [
+          "\\bgit\\s+push\\b",
+          "\\bnpm\\s+publish\\b",
+          "\\bRemove-Item\\b",
+          "\\bdel\\s+"
+        ],
+        "level": "L3",
+        "desc": "推送/发布/删除"
+      },
+      {
+        "toolPrefix": "mcp__",
+        "level": "L2",
+        "desc": "MCP 工具（外部系统）"
+      },
+      {
+        "toolPrefix": "mcp__",
+        "field": "text",
+        "fieldContains": [
+          "发布",
+          "publish",
+          "post",
+          "发到",
+          "群发"
+        ],
+        "level": "L3",
+        "desc": "外发内容（永远要人点头，always 不能绕过）",
+        "alwaysAsk": true
+      },
+      {
+        "tool": "write",
+        "level": "L2",
+        "desc": "写本地文件（可撤销）"
+      },
+      {
+        "tool": "edit",
+        "level": "L2",
+        "desc": "改本地文件（可撤销）"
+      },
+      {
+        "tool": "assign_model",
+        "level": "L2",
+        "desc": "派单给外部执行器"
+      },
+      {
+        "tool": "bash",
+        "level": "L2",
+        "desc": "普通本地命令"
+      },
+      {
+        "tool": "read",
+        "level": "L0"
+      },
+      {
+        "tool": "grep",
+        "level": "L0"
+      },
+      {
+        "tool": "find",
+        "level": "L0"
+      },
+      {
+        "tool": "ls",
+        "level": "L0"
+      }
+    ]
+  },
+  "roles": {
+    "design": {
+      "provider": "antigravity",
+      "label": "网站设计",
+      "brief": "你是网站设计师。先把信息架构、页面清单、视觉方向（配色/字体/间距/组件）和每页的目标与转化路径写清楚，再动手。不要写代码除非明确要求。交付：一份可执行的设计说明（含页面结构表、组件清单、SEO 需要的每个页面类型）。"
+    },
+    "frontend": {
+      "provider": "antigravity",
+      "label": "前端实现",
+      "brief": "你是前端工程师。按给定设计说明实现页面，产出可静态构建的代码：语义化 HTML、正确的 title/description/og、结构化数据、响应式与无障碍。交付：可构建的站点 + 构建通过证据，不写营销文案。"
+    },
+    "review": {
+      "provider": "grok",
+      "label": "评审审查",
+      "brief": "你是严格的评审。只读代码，只提必须先修的问题（阻塞发布/影响 SEO/明显缺陷），按严重度排序；如果没有必须先修的，直接回复“可以合并”。不要提风格偏好。"
+    },
+    "seo": {
+      "provider": "antigravity",
+      "label": "SEO/GEO",
+      "brief": "你是 SEO 与 GEO（让 AI 搜索引擎能引用并正确复述站点内容）专家。产出：关键词与意图地图、页面 title/description/meta 方案、sitemap/robots/canonical 规则、schema.org 结构化数据清单、llms.txt 与 faq/对比/定义类页面的内容规划、内外链策略。每条建议都要落到具体 URL 和可写出的文案。"
+    },
+    "social": {
+      "provider": "grok",
+      "label": "社媒内容",
+      "brief": "你是社媒内容策划。只产出可发布的文案草稿（标题/正文/标签/建议发布平台与时间），不得声称已发布，不得编造数据或引语。每条草稿必须能被人在审批卡上一眼看懂发给谁。"
+    },
+    "deploy": {
+      "provider": "pi",
+      "label": "部署",
+      "brief": "你是部署执行者。只在拿到已批准的命令后执行；部署前先输出将执行的完整命令、目标平台与回滚方式；部署后必须给出可访问地址与验证证据（HTTP 状态、关键页面标题）。"
+    }
+  },
+  "providers": {
+    "pi": {
+      "tier": 1,
+      "caps": [
+        "general",
+        "research",
+        "bulk-edit"
+      ],
+      "maxCallsPerDay": 200,
+      "maxMinutesPerDay": 240
+    },
+    "antigravity": {
+      "tier": 2,
+      "caps": [
+        "research",
+        "bulk-edit",
+        "general",
+        "code",
+        "review"
+      ],
+      "maxCallsPerDay": 30,
+      "maxMinutesPerDay": 90
+    },
+    "grok": {
+      "tier": 2,
+      "caps": [
+        "code-review",
+        "research",
+        "pr"
+      ],
+      "maxCallsPerDay": 20,
+      "maxMinutesPerDay": 60
+    },
+    "gemini": {
+      "tier": 2,
+      "caps": [
+        "research",
+        "bulk-edit",
+        "general"
+      ],
+      "maxCallsPerDay": 20,
+      "maxMinutesPerDay": 60,
+      "paused": true,
+      "note": "官方 CLI 已对个人停用（IneligibleTierError），改用 antigravity"
+    },
+    "codex": {
+      "tier": 2,
+      "caps": [
+        "code",
+        "refactor",
+        "pr",
+        "test"
+      ],
+      "maxCallsPerDay": 30,
+      "maxMinutesPerDay": 120,
+      "paused": true,
+      "note": "ChatGPT 账号无 Codex 权益（6 个模型全部 model_not_found），需 OpenAI API key"
+    },
+    "claude": {
+      "tier": 2,
+      "caps": [
+        "code",
+        "review"
+      ],
+      "maxCallsPerDay": 30,
+      "maxMinutesPerDay": 120,
+      "paused": true,
+      "note": "用户决定不接（无付费会员）；本地中转 127.0.0.1:15721 无监听"
+    }
+  },
+  "routes": [
+    {
+      "tag": "code",
+      "prefer": [
+        "antigravity"
+      ],
+      "fallback": [
+        "pi"
+      ]
+    },
+    {
+      "tag": "review",
+      "prefer": [
+        "grok",
+        "antigravity"
+      ],
+      "fallback": [
+        "pi"
+      ]
+    },
+    {
+      "tag": "code-review",
+      "prefer": [
+        "grok",
+        "antigravity"
+      ],
+      "fallback": [
+        "pi"
+      ]
+    },
+    {
+      "tag": "research",
+      "prefer": [
+        "antigravity",
+        "grok",
+        "pi"
+      ],
+      "fallback": []
+    },
+    {
+      "tag": "general",
+      "prefer": [
+        "pi",
+        "antigravity"
+      ],
+      "fallback": []
+    },
+    {
+      "tag": "bulk-edit",
+      "prefer": [
+        "antigravity",
+        "pi"
+      ],
+      "fallback": []
+    }
+  ]
+}
